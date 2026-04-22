@@ -1,37 +1,26 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-export const counterSlice = createSlice({
-  name: "counter",
-  initialState: 0,
+const initialState = {
+  items: [],
+};
+
+const inventorySlice = createSlice({
+  name: "inventory",
+  initialState,
   reducers: {
-    increment: (state, action) => {
-      if (action.payload) {
-        return state + action.payload;
-      } else {
-        return state + 1;
-      }
+    tambahBarang: (state, action) => {
+      state.items.push(action.payload);
     },
-
-    decrement: (state, action) => {
-      if (action.payload) {
-        return state - action.payload;
-      } else {
-        return state - 1;
-      }
+    hapusBarang: (state, action) => {
+      state.items.splice(action.payload, 1);
     },
-  },
-
-  selectors: {
-    getDoubleCounter(state) {
-      return state * 2;
-    },
-
-    getCounter(state, value) {
-      return state * value;
+    bersihkanSemua: (state) => {
+      state.items = [];
     },
   },
 });
 
-export const { increment, decrement } = counterSlice.actions;
+export const { tambahBarang, hapusBarang, bersihkanSemua } =
+  inventorySlice.actions;
 
-export const { getDoubleCounter, getCounter } = counterSlice.selectors;
+export default inventorySlice.reducer;

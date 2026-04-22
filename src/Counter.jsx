@@ -1,36 +1,67 @@
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  decrement,
-  increment,
-  getCounter,
-  getDoubleCounter,
-} from "./counterSlice.js";
+  tambahBarang,
+  hapusBarang,
+  bersihkanSemua,
+} from "./counterSlice";
 
-export default function Counter() {
-  const counter = useSelector(state => state.counter);
-  const double = useSelector(getDoubleCounter);
+export default function InventoryApp() {
+  const [nama, setNama] = useState("");
+  const [qty, setQty] = useState("");
+
   const dispatch = useDispatch();
+  const items = useSelector((state) => state.inventory.items);
 
-  function handleIncrement() {
-    dispatch(increment());
-  }
+  const handleTambah = () => {
+    if (!nama || !qty) return;
 
-  function handleDecrement() {
-    dispatch(decrement());
-  }
+    dispatch(
+      tambahBarang({
+        nama,
+        qty: Number(qty),
+      })
+    );
 
-  const doubleCounter = useSelector(getDoubleCounter);
-  const tripleCounter = useSelector(state => getCounter(state, 3));
+    setNama("");
+    setQty("");
+  };
 
   return (
-    <div>
-      <h1>Counter: {counter}</h1>
-      <h1>Double Counter: {doubleCounter}</h1>
-      <h1>Triple Counter: {tripleCounter}</h1>
-      <button onClick={handleIncrement}>Increment</button>
-      <button onClick={() => dispatch(increment(2))}>Increment +2</button>
-      <button onClick={handleDecrement}>Decrement</button>
-      <button onClick={() => dispatch(decrement(2))}>Decrement -2</button>
+    <div style={{ padding: "20px" }}>
+      <h2>E-Inventory Masjid</h2>
+
+      <input
+        type="text"
+        placeholder="Nama Barang"
+        value={nama}
+        onChange={(e) => setNama(e.target.value)}
+      />
+
+      <input
+        type="number"
+        placeholder="Kuantitas"
+        value={qty}
+        onChange={(e) => setQty(e.target.value)}
+      />
+
+      <br /><br />
+
+      <button onClick={handleTambah}>Tambah</button>
+      <button onClick={() => dispatch(bersihkanSemua())}>
+        Bersihkan Semua
+      </button>
+
+      <ul>
+        {items.map((item, index) => (
+          <li key={index}>
+            {item.nama} - {item.qty}
+            <button onClick={() => dispatch(hapusBarang(index))}>
+              Hapus
+            </button>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
